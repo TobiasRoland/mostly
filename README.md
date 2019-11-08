@@ -1,2 +1,2 @@
 # mostly
-Mostly.codes 
+https://mostly.codes
