@@ -1,6 +1,6 @@
 basic_settings:
   site_title: Tobias Roland
-  site_tagline: Hi there! I'm a London based software engineer, and I'm currently taking a few months out of my career to study functional programming, and this blog documents that jorney
+  site_tagline: I'm a London based software engineer, currently taking a few months out of my career to study functional programming. This is my blog.
   favicon_image: /images/snavicon.png
 
 header_settings:
@@ -12,12 +12,7 @@ menu_settings:
   menu_items:
     - title: 'Latest'
       url: '/'
-    - title: 'Projects'
-      url: '/projects/'
-    - title: 'About'
-      url: '/about'
-    - title: 'Contact'
-      url: '/contact'
+
 
 grid_settings:
   grid_spacing: 10
