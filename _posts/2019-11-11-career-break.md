@@ -38,8 +38,8 @@ some time out to explore what I am actually passionate about.
 
 ## Fears and goals
     
-My biggest fear for this project is failing to my overcome my procrastination. I have three things 
-that I hope will keep me motivated and on track. I might adjust these over time, but
+My biggest fear for this project is failing to my overcome my procrastination. To combat it, I have some things 
+that I hope will keep me motivated and on track. I might adjust these over time, for now though, 
 I've set my initial values to the following:
 
 ##### Public goal setting
