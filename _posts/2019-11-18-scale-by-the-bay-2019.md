@@ -99,8 +99,7 @@ but instead I'll just point out a few highlights that I'm extremely happy I got 
 In general, the talks were good to excellent in quality, and I particularly enjoyed that the speakers were very varied
 in terms of experience with public speaking. It wasn't
 "just" the big company names that were presenting, there were a fair amount of greener people presenting too. 
-I'm excited to see when the talks for the other tracks to be up on functional.tv so I can browse through them - apparently
-they should all by up in one-to-two week's time.
+The videos of the talks I watched - and the ones I missed, too - should be up on [functional.tv](https://functional.tv) in a few weeks, I might do anther blog post when that happens with some added commentary for some of the talks I really enjoyed.
 
 I would list some negatives to balance this out, but overall there wasn't anything that impacted my experience of 
 the conference negatively. One or two talks that were a little heavy on the up-front presentation
