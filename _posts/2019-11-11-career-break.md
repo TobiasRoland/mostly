@@ -2,7 +2,6 @@
 title: "I quit my job to study what I'm passionate about"
 date: 2019-11-09 00:00:00
 excerpt: I'm taking the last months of 2019 off to study functional programming, scala and category theory...
-        .
 featured_image: '/images/functional_scala_haskell_books.jpg'
 ---
 
