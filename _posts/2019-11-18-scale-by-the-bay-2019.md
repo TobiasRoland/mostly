@@ -61,7 +61,7 @@ than a few stone throws away from excellent cocktail bars, too.
 
 For the unfamilar, Scale By The Bay is a big scala/functional conference which is very much "the community's" conference.
 It's been running for a few years (since 2013) and a lot of really interesting talks from the various events are
-available online at [functional.tv](https://functional.tv). The organizer of the event since its inception, Alexy Khrabrov, was 
+available online at [functionalTV](https://www.youtube.com/user/FunctionalTV). The organizer of the event since its inception, Alexy Khrabrov, was 
 standing outside the building shaking all the attendees hands. His enthusiasm for the event was felt, 
 and the event truly did live up to its stated values:
 
@@ -99,7 +99,7 @@ but instead I'll just point out a few highlights that I'm extremely happy I got 
 In general, the talks were good to excellent in quality, and I particularly enjoyed that the speakers were very varied
 in terms of experience with public speaking. It wasn't
 "just" the big company names that were presenting, there were a fair amount of greener people presenting too. 
-The videos of the talks I watched - and the ones I missed, too - should be up on [functional.tv](https://functional.tv) in a few weeks, I might do anther blog post when that happens with some added commentary for some of the talks I really enjoyed.
+The videos of the talks I watched - and the ones I missed, too - should be up on [functionalTV](https://www.youtube.com/user/FunctionalTV) in a few weeks, I might do anther blog post when that happens with some added commentary for some of the talks I really enjoyed.
 
 I would list some negatives to balance this out, but overall there wasn't anything that impacted my experience of 
 the conference negatively. One or two talks that were a little heavy on the up-front presentation
