@@ -2,6 +2,11 @@
 title: "GCP Cloud Functions with Scala.js in 10 lines(ish)"
 date: 2019-11-17 00:00:00
 featured_image: '/images/gcp-scalajs-nodejs-cloud.jpg'
+excerpt: It's easy to spin up a node.js runtime on Google Cloud Platform's Cloud Functions, 
+         but say you want to write in Scala instead of JavaScript... well, that's thankfully easy too! 
+         Though requires a few extra steps. Since couldn't find a good tutorial on
+         how to get Scala.js working in a google Cloud Function, I decided to write one.
+       
 ---
 
 It's easy to spin up a node.js runtime on Google Cloud Platform's Cloud Functions, 
@@ -9,7 +14,7 @@ but say you want to write in Scala instead of JavaScript... well, that's thankfu
 Though requires a few extra steps.
 
 Since couldn't find a good tutorial on
-how to get Scala.js working in a google Cloud Function, I decided to write one myself.
+how to get Scala.js working in a google Cloud Function, I decided to write one.
 
 ### What we'll build
 An earth-shatteringly simple cloud function in Scala(.js) that will respond 
@@ -52,6 +57,7 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.31")
 
 #### Add your sbt configuration:
 In your `build.sbt`, you will need to enable the plugin and set a few important settings.
+
 ```scala
 name := "hello-world"
 version := "0.1"
@@ -96,12 +102,12 @@ and http request.
 
 Create a scala file, `src/scala/codes/mostly/gcp/cloudfunctions/HelloWorldExample.scala`, and populate it first of all with some imports:
 
-
 ```scala
 import io.scalajs.npm.express.{Request, Response}
 import scala.scalajs.js.{Function2 => JSFunction2}
 import scala.scalajs.js.annotation.JSExportTopLevel
 ```
+
 We will use `Response` and `Request` from the **express** dependency mentioned earlier, and 
 we've also imported the [scalajs Function2](https://www.scala-js.org/doc/interoperability/types.html) as `JSFunction2`.
 You strictly speaking don't have to do this renaming, but I like to make that distinction since 
@@ -133,6 +139,7 @@ object HelloWorldExample {
   }
 }
 ```
+
 Adding the annotation specifies that the function should be exported to the top level of the module, 
 and will thus be callable from GCP as "helloWorld" (or whatever you
 decided to put as the parameter). The string doesn't strictly *have*
@@ -154,6 +161,7 @@ object HelloWorldExample {
   }
 }
 ```
+
 Exactly ten lines of scala if you ignore the whitespace.
 
 #### Build it
@@ -202,8 +210,6 @@ from our entry point and removing everything else.
 
 ### Wrapping up + next steps
 
-![](/images/gcp-scalajs-nodejs-cloud.jpg)
-
 ... And that's it! All you've got left is deploying your minimized javascript. For that, I refer you to the excellent
  GCP Cloud Functions [documentation](https://cloud.google.com/functions/docs/deploying/).
 
@@ -215,10 +221,7 @@ it worthwhile.
 Word of warning; as you add more dependencies and lines of code to your project, the JS payload size will
 start to shoot up rather quickly, so keep an eye on your file size. 
 
----
-
 If you found this useful, have a look at the [code on github](https://github.com/TobiasRoland/scalajs-gcp-cloud-function)
 and hey while you're there, maybe add a ⭐ to give me that dopamine hit of validation!
 
 This is just a primer; In a future post, I'll write up a more involved example based on this simple skeleton.
-
