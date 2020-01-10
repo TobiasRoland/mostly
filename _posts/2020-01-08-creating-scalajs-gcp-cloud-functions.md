@@ -23,7 +23,7 @@ to any HTTP request with a `200 OK` and a plaintext body of `Hello World`.
 This tutorial is written to be accessible to beginners, and so you 
 shouldn't need any deep familiarity with scala.js, sbt, GCP, cloud functions nor node.js to follow this example.
 
-In the end, we'll be have about 10 lines of scala code and approximately the same amount
+In the end, we'll have about 10 lines of scala code and approximately the same amount
 of `sbt` configuration - that's all it takes. There's a few interesting things that
 are worth paying attention to within those 20 lines, so let's get to it.
 
