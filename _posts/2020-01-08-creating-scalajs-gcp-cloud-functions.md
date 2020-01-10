@@ -43,7 +43,7 @@ configuration and know-how of GCP.
 
 By transpiling your code to JavaScript, you won't have to pay the cold-JVM startup costs. While it's 
 tempting to jumpt to the conclusion that transpiling all of scala into javascript would result in a huge slow artifact,
-the optimization step makes sure to only transpile the bare minimum amound of
+the optimization step makes sure to only transpile the bare minimum amount of
 code required to execute the function.
 
 ### Preconditions
@@ -66,7 +66,7 @@ hello-world
         └── scala
 ```
 
-#### Add the scalajs sbt plugin:
+#### Add the scala.js sbt plugin:
 In your `plugins.sbt`, declare that you want to use the scala.js plugin 
 (latest version can be found [here](http://www.scala-js.org/doc/project/)):
 
@@ -94,10 +94,10 @@ What we've accomplished here:
 **enablePlugins(ScalaJSPlugin)** does what it says on the tin
 
 **scalaJSModuleKind** has been set to CommonJSModule. This is the module system of NodeJS (our runtime), and allows
-us to export our methods so they can be invoked by GCP.
+us to export our methods so they can be invoked by GCP
 
 **scalaJSUseMainModuleInitializer** is set to false as we won't be using a "main app". We want to compile
-all of our code into a single javascript `index.js` file and expose an exported
+all of our code into a single `.js` file and expose an exported
 JS-function that can be invoked by GCP
 
 
@@ -118,7 +118,8 @@ fall back to an earlier version.
 Enough setup - now, let's write the actual code that will respond with `Hello World` when receiving
 and http request.
 
-Create a scala file, `src/scala/codes/mostly/gcp/cloudfunctions/HelloWorldExample.scala`, and populate it first of all with some imports:
+Create the scala source file, `src/scala/codes/mostly/gcp/cloudfunctions/HelloWorldExample.scala`, and populate it
+with some imports:
 
 ```scala
 import io.scalajs.npm.express.{Request, Response}
@@ -127,13 +128,13 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 ```
 
 We will use `Response` and `Request` from the **express** dependency mentioned earlier, and 
-we've also imported the [scalajs Function2](https://www.scala-js.org/doc/interoperability/types.html) as `JSFunction2`.
+we'll also import the [scalajs Function2](https://www.scala-js.org/doc/interoperability/types.html) as `JSFunction2`.
 You strictly speaking don't have to do this renaming, but I like to make that distinction since 
 the standard scala library already [has a Function2](https://www.scala-lang.org/api/current/scala/Function2.html),
 and it's nice to keep the distinction between regular scala code and the 
 explicitly JS-code. Lastly, we've got an import for the JSExportTopLevel annotation - we'll come to that in a bit.
 
-We need to provide a JSFunction2 that can be called by GCP:
+Now for the main logic. We need to provide a JSFunction2 that can be called by GCP:
 
 ```scala
 object HelloWorldExample {
@@ -145,7 +146,7 @@ object HelloWorldExample {
 
 The function itself is trivial. It's interesting to note the right-hand side of the `=`
  is just regular scala code. The code is automatically (well, implicitly) 
- converted into JSFunction2!
+ converted into a `JSFunction2`!
 
 Finally, we need to make use of the `JSExportTopLevel` annotation:
 
@@ -183,14 +184,14 @@ object HelloWorldExample {
 Exactly ten lines of scala if you ignore the whitespace.
 
 #### Build it
-OK. Since we're using the sbt scalajs plugin, we can now run a one-line command to build our JS file:
+Since we're using the sbt scala.js plugin, we can now run a one-line command to build our JS file:
 
 ```bash
 $ sbt fullOptJS
 ```
 
-This will generate an optimized `.js` file in your `target` folder. If the name of your project is `hello-world`,
-your file will be named `/target/scala-2.12/hello-world-opt.js`. Because we used `fullOptJS` to fully 
+This will generate our `.js` file in the `target` folder. If the name of the project is `hello-world`,
+the file will be named `/target/scala-2.12/hello-world-opt.js`. Because we used `fullOptJS` to fully 
 optimize the JS, it should've been minimized into javascript gibberish:
 
 ```javascript
@@ -231,7 +232,7 @@ readability doesn't matter to us.
 
 ### Wrapping up + next steps
 
-.. And that's it! All you've got left is deploying the scala.js output javascript as a Cloud Function.
+... And that's it! All you've got left is deploying the scala.js output javascript as a Cloud Function.
 For that, I refer you to the excellent
  GCP Cloud Functions [documentation](https://cloud.google.com/functions/docs/deploying/).
 
@@ -251,8 +252,7 @@ the function.
 If you found this useful, have a look at the [code on github](https://github.com/TobiasRoland/scalajs-gcp-cloud-function)
 and hey, while you're there, maybe add a ⭐ to give me that dopamine hit of validation!
 
-### Future how-to's and guides:
-This tutorial was just a primer; in a future post, I'll write up a more involved example based on this simple skeleton.
+This tutorial is just a primer. In a future post, I'll write up a more involved example based on this simple skeleton.
 
 As I couldn't find a good [giter8 template](http://www.foundweekends.org/giter8/) for GCP Cloud Functions I'll 
 also be converting the example app into a `.g8` template so you can use `sbt new <template-name-TBD>` to 
