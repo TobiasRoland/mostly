@@ -30,6 +30,22 @@ are worth paying attention to within those 20 lines, so let's get to it.
 Note: The latest version of the code in this tutorial example can be 
 [found on GitHub](https://github.com/TobiasRoland/scalajs-gcp-cloud-function).
 
+### Why would I want to do this in the first place?
+Let's say the work you want to accomplish is stateless and short lived. Spinning up a JVM
+for a single request and then killing it again is an overhead you don't necessarily want. 
+
+Unlike [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/java-programming-model.html)
+and [Azure Functions](https://azure.microsoft.com/en-us/services/functions/), 
+GCP Cloud Functions do not support 
+running native JVM applications their serverless offering as of Jan 2020. There _are_ other ways to use the 
+[JVM on GCP](https://cloud.google.com/java/), though these require significantly more
+configuration and know-how of GCP. 
+
+By transpiling your code to JavaScript, you won't have to pay the cold-JVM startup costs. While it's 
+tempting to jumpt to the conclusion that transpiling all of scala into javascript would result in a huge slow artifact,
+the optimization step makes sure to only transpile the bare minimum amound of
+code required to execute the function.
+
 ### Preconditions
 I assume the following have been installed already:
 
@@ -41,10 +57,13 @@ I assume the following have been installed already:
 We'll start with a vanilla sbt project:
 
 ```
- hello-world
- ├── build.sbt
- └── project
-     └── plugins.sbt
+hello-world
+├── build.sbt
+├── project
+│   └── plugins.sbt
+└── src
+    └── main
+        └── scala
 ```
 
 #### Add the scalajs sbt plugin:
@@ -73,7 +92,6 @@ libraryDependencies += "io.scalajs.npm" %%% "express" % "0.4.2"
 What we've accomplished here:
 
 **enablePlugins(ScalaJSPlugin)** does what it says on the tin
-
 
 **scalaJSModuleKind** has been set to CommonJSModule. This is the module system of NodeJS (our runtime), and allows
 us to export our methods so they can be invoked by GCP.
@@ -201,16 +219,20 @@ J.prototype.$classData=Q({P:0},"scala.scalajs.runtime.RuntimeLong",{P:1,g:1,a:1,
 //# sourceMappingURL=hello-world-opt.js.map
 ```
 
-Looks like a nightmare at first glance, but it's actually a thing of beauty. 
-You will note that despite us compiling, or rather, transpiling, scala 
+An aesthetic nightmare, but a clever piece of optimization! 
+You will note that despite us transpiling scala 
 into JS, the end result is surprisingly a small amount of Javascript.
 This is thanks to the [optimizer](https://www.scala-js.org/doc/internals/compile-opt-pipeline.html) dutifully
 identifying the classes and methods reachable 
-from our entry point and removing everything else.
+from our entry point and removing everything else. Theoretically, using `fullOptJS` instead of `fastOptJS` should also 
+result in a more "thorough" optimization resulting in faster code. The actual performance improvement is 
+in all likelihood negligible, but since we're treating javascript as a transpilation target,
+readability doesn't matter to us.
 
 ### Wrapping up + next steps
 
-... And that's it! All you've got left is deploying your minimized javascript. For that, I refer you to the excellent
+.. And that's it! All you've got left is deploying the scala.js output javascript as a Cloud Function.
+For that, I refer you to the excellent
  GCP Cloud Functions [documentation](https://cloud.google.com/functions/docs/deploying/).
 
 Obviously, the Hello World example is too simple to justify a transpiled scala.js project,
@@ -219,9 +241,21 @@ I think tiny amount of boilerplate and dependencies required to get up and runni
 it worthwhile.
 
 Word of warning; as you add more dependencies and lines of code to your project, the JS payload size will
-start to shoot up rather quickly, so keep an eye on your file size. 
+start to shoot up rather quickly, and (depending on complexity of your code) so will the execution time. 
+If your function ends up taking a significant amount of time to execute in GCP, you will probably want to consider
+other solutions than serverless functions as your costs are directly tied to the execution time of 
+the function.
+
+---
 
 If you found this useful, have a look at the [code on github](https://github.com/TobiasRoland/scalajs-gcp-cloud-function)
-and hey while you're there, maybe add a ⭐ to give me that dopamine hit of validation!
+and hey, while you're there, maybe add a ⭐ to give me that dopamine hit of validation!
 
-This is just a primer; In a future post, I'll write up a more involved example based on this simple skeleton.
+### Future how-to's and guides:
+This tutorial was just a primer; in a future post, I'll write up a more involved example based on this simple skeleton.
+
+As I couldn't find a good [giter8 template](http://www.foundweekends.org/giter8/) for GCP Cloud Functions I'll 
+also be converting the example app into a `.g8` template so you can use `sbt new <template-name-TBD>` to 
+get started with GCP and Scala.js immediately.
+
+Thanks for reading!
