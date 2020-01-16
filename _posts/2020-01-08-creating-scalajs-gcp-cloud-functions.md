@@ -9,6 +9,15 @@ excerpt: It's easy to spin up a node.js runtime on Google Cloud Platform's Cloud
        
 ---
 
+**Update:** I've since this blog post created [a giter8 template](https://github.com/TobiasRoland/scalajs-gcp-cloud-functions.g8),
+so if you just want to get up and running, execute:
+
+```scala
+sbt new TobiasRoland/scalajs-gcp-cloud-function.g8
+``` 
+
+---
+
 It's easy to spin up a node.js runtime on Google Cloud Platform's Cloud Functions, 
 but say you want to write in Scala instead of JavaScript... well, that's thankfully easy too! 
 Though requires a few extra steps.
@@ -56,7 +65,7 @@ I assume the following have been installed already:
 
 We'll start with a vanilla sbt project:
 
-```
+```text
 hello-world
 ├── build.sbt
 ├── project
@@ -70,7 +79,7 @@ hello-world
 In your `plugins.sbt`, declare that you want to use the scala.js plugin 
 (latest version can be found [here](http://www.scala-js.org/doc/project/)):
 
-```scala
+```sbt
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.31")
 ```
 
@@ -252,10 +261,8 @@ the function.
 If you found this useful, have a look at the [code on github](https://github.com/TobiasRoland/scalajs-gcp-cloud-function)
 and hey, while you're there, maybe add a ⭐ to give me that dopamine hit of validation!
 
-This tutorial is just a primer. In a future post, I'll write up a more involved example based on this simple skeleton.
+**Update:** A giter8 template is now available: [/TobiasRoland/scalajs-gcp-cloud-functions.g8](https://github.com/TobiasRoland/scalajs-gcp-cloud-functions.g8)] 
 
-As I couldn't find a good [giter8 template](http://www.foundweekends.org/giter8/) for GCP Cloud Functions I'll 
-also be converting the example app into a `.g8` template so you can use `sbt new <template-name-TBD>` to 
-get started with GCP and Scala.js immediately.
+This tutorial is just a primer. In a future post, I'll write up a more involved example based on this simple skeleton.
 
 Thanks for reading!
