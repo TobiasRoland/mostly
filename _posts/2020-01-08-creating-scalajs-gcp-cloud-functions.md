@@ -79,7 +79,7 @@ hello-world
 In your `plugins.sbt`, declare that you want to use the scala.js plugin 
 (latest version can be found [here](http://www.scala-js.org/doc/project/)):
 
-```sbt
+```scala
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.31")
 ```
 
@@ -261,7 +261,7 @@ the function.
 If you found this useful, have a look at the [code on github](https://github.com/TobiasRoland/scalajs-gcp-cloud-function)
 and hey, while you're there, maybe add a ⭐ to give me that dopamine hit of validation!
 
-**Update:** A giter8 template is now available: [/TobiasRoland/scalajs-gcp-cloud-functions.g8](https://github.com/TobiasRoland/scalajs-gcp-cloud-functions.g8)] 
+**Update:** A giter8 template is now available: [TobiasRoland/scalajs-gcp-cloud-functions.g8](https://github.com/TobiasRoland/scalajs-gcp-cloud-functions.g8)
 
 This tutorial is just a primer. In a future post, I'll write up a more involved example based on this simple skeleton.
 
