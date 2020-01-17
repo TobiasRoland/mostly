@@ -13,7 +13,7 @@ excerpt: It's easy to spin up a node.js runtime on Google Cloud Platform's Cloud
 so if you just want to get up and running, execute:
 
 ```scala
-sbt new TobiasRoland/scalajs-gcp-cloud-function.g8
+sbt new TobiasRoland/scalajs-gcp-cloud-functions.g8
 ``` 
 
 ---
