@@ -1,6 +1,6 @@
 basic_settings:
   site_title: Tobias Roland
-  site_tagline: I'm a London based software engineer, currently taking a few months out of my career to study functional programming. This is my blog.
+  site_tagline: I'm a London based scala developer. This is my blog.
   favicon_image: /images/snavicon.png
 
 header_settings:
