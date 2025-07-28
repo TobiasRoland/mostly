@@ -1,55 +1,38 @@
----
-layout: default
-title: Tobias Roland - Mostly Codes
-description: I quit my job to study functional programming, this is my blog
-featured_image: /images/scale-by-the-bay-flag.jpg
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>mostly.codes</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<section class="blog single">
-
-	<div class="wrap">
-
-		{% for post in paginator.posts %}
-
-		<article class="blog-post">
-
-			<div class="blog-post__header">
-				<h2 class="blog-post__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-				<p class="blog-post__subtitle">{{ post.date | date_to_long_string }}</p>
-			</div>
-
-			{% if post.featured_image %}
-			<a href="{{ post.url | relative_url }}" class="blog-post__image" style="background-image: url({{ post.featured_image | relative_url }});"></a>
-			{% endif %}
-
-			<div class="blog-post__content">
-				<p>{{ post.excerpt }}</p>
-				<p><a href="{{ post.url | relative_url }}" class="button">Read More</a>
-			</div>
-
-		</article>
-
-		{% endfor %}
-
+<div class="window">
+	<div class="title-bar">
+		<div class="title-bar-text">mostly.codes</div>
 	</div>
-
-</section>
-
-{% if paginator.total_pages > 1 %}
-
-<section class="pagination">
-
-	{% if paginator.previous_page %}
-	<div class="pagination__prev">
-		<a href="{{ paginator.previous_page_path | relative_url }}" class="button button--large"><i class="fa fa-angle-left" aria-hidden="true"></i> <span>Newer Posts</span></a>
+	<div class="window-body">
+		<fieldset>
+			<legend>Blog Posts (ISO8601: Title)</legend>
+			<ul class="tree-view">
+				<li><a href="blog/rethinking-how-i-blog-technically.html">2025-07-27: Rethinking how I blog (technically)</a></li>
+				<li><a href="blog/creating-scalajs-gcp-cloud-functions.html">2020-01-17: GCP Cloud Functions with Scala.js in 10 lines(ish)</a></li>
+				<li><a href="blog/scale-by-the-bay-2019.html">2019-11-17: Scale by the bay 2019</a></li>
+				<li><a href="blog/career-break.html">2019-11-09: Quit my job to study what I care about</a></li>
+			</ul>
+		</fieldset>
+		<p>Hey! I'm Tobias, originally from Denmark, now a London based tech lead and a scala engineer at ITV, primarily
+		   working on the Streaming platform ITVX's metadata and personalisation. Occasionaly I write a blog post about
+		   something that interests me. I care about people and processes over
+		   tech, and I find tech more interesting when it's about people.
+		</p>
+		<div class="status-bar">
+			<p class="status-bar-field"><a href="https://github.com/TobiasRoland">gh</a></p>
+			<p class="status-bar-field"><a href="https://www.linkedin.com/in/tobiasroland/">linkedin</a></p>
+		</div>
 	</div>
-	{% endif %}
-	{% if paginator.next_page %}
-	<div class="pagination__next">
-		<a href="{{ paginator.next_page_path | relative_url }}" class="button button--large"><span>Older Posts</span> <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-	</div>
-	{% endif %}
+</div>
 
-</section>
-
-{% endif %}
+</body>
+</html>

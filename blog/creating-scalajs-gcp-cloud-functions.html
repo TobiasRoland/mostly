@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GCP Cloud Functions with Scala.js in 10 lines(ish)</title>
+	<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+<main>
+	<div class="window">
+		<div class="window-body">
+			<h1>GCP Cloud Functions with Scala.js in 10 lines(ish)</h1>
+			<div>20 January 2020</div>
+
+			<blockquote>
+				<p>
+					<strong>Second update:</strong> This blog post is now obsolete, gcp supports scala better these days. Post stays up for historical purposes, but please don't follow its
+					                                advice.
+				</p>
+				<p>
+					<strong>First update:</strong> I’ve since this blog post created a giter8 template, so if you just want to get up and running, execute:
+				<div open>
+					<pre>sbt new TobiasRoland/scalajs-gcp-cloud-functions.g8</pre>
+				</div>
+				<p>
+				</p>
+			</blockquote>
+
+
+			<p>It’s easy to spin up a node.js runtime on Google Cloud Platform’s Cloud Functions, but say you want to write in Scala instead of JavaScript… well, that’s thankfully easy
+			   too! Though requires a few extra steps.</p>
+
+			<p>Since couldn’t find a good tutorial on how to get Scala.js working in a Google Cloud Function, I decided to write one.</p>
+
+			<h2>What we’ll build</h2>
+			<p>An earth-shatteringly simple cloud function in Scala(.js) that will respond to any HTTP request with a 200 OK and a plaintext body of Hello World.
+			<p>
+
+			<p>This tutorial is written to be accessible to beginners, and so you shouldn’t need any deep familiarity with scala.js, sbt, GCP, cloud functions nor node.js to follow this
+			   example.</p>
+
+			<p>In the end, we’ll have about 10 lines of scala code and approximately the same amount of sbt configuration - that’s all it takes. There’s a few interesting things that are
+			   worth paying attention to within those 20 lines </p>
+
+			<p><strong>Note:</strong> The latest version of the code in this tutorial example can be found on GitHub <a href="https://github.com/TobiasRoland/scalajs-gcp-cloud-function">here</a>
+			</p>
+
+			<h2>Why would I want to do this in the first place?</h2>
+
+			<p>Let’s say the work you want to accomplish is stateless and short lived. Spinning up a JVM for a single request and then killing it again is an overhead you don’t
+			   necessarily want.</p>
+
+			<p>Unlike AWS Lambda and Azure Functions, GCP Cloud Functions do not support running native JVM applications their serverless offering as of Jan 2020. There are other ways to
+			   use the JVM on GCP, though these require significantly more configuration and know-how of GCP.</p>
+
+			<p>By transpiling your code to JavaScript, you won’t have to pay the cold-JVM startup costs. While it’s tempting to jumpt to the conclusion that transpiling all of scala into
+			   javascript would result in a huge slow artifact, the optimization step makes sure to only transpile the bare minimum amount of code required to execute the function.</p>
+
+			<h2>Preconditions</h2>
+			<p>I assume the following have been installed already:
+			<p>
+			<ul>
+				<li>sbt</li>
+				<li>nodeJS</li>
+			</ul>
+
+			<h2>Tutorial</h2>
+			<p>We’ll start with a vanilla sbt project:</p>
+			<details open>
+<pre>
+hello-world
+├── build.sbt
+├── project
+│   └── plugins.sbt
+└── src
+    └── main
+      └── scala
+</pre>
+			</details>
+
+			<p>Add the scala.js sbt plugin in your <strong>plugins.sbt</strong>, declare that you want to use the scala.js plugin (probably use latest version):</p>
+
+			<details open>
+				<pre>addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.31")</pre>
+			</details>
+
+			<p>Add your sbt configuration - in your build.sbt, you will need to enable the plugin and set a few important settings.</p>
+
+			<details open><pre>
+name := "hello-world"
+version := "0.1"
+scalaVersion := "2.12.10"
+enablePlugins(ScalaJSPlugin)
+scalaJSModuleKind := org.scalajs.core.tools.linker.backend.ModuleKind.CommonJSModule
+scalaJSUseMainModuleInitializer := false
+libraryDependencies += "io.scalajs.npm" %%% "express" % "0.4.2" // NOTE! To use dependencies with scala.js, dependencies are declared with triple percentage instead of double</pre>
+			</details>
+
+			<p>
+			<p>What we’ve accomplished here:</p
+
+			<ul>
+				<li><strong>enablePlugins(ScalaJSPlugin)</strong> does what it says on the tin</li>
+
+				<li><strong>scalaJSModuleKind</strong> has been set to CommonJSModule. This is the module system of NodeJS (our runtime), and allows us to export our methods so they can be
+				                                       invoked by GCP
+				</li>
+				<li><strong>scalaJSUseMainModuleInitializer</strong> is set to false as we won’t be using a “main app”. We want to compile all of our code into a single .js file and expose
+				                                                     an exported
+				                                                     JS-function that can be invoked by GCP
+				</li>
+				<li><strong>express dependency</strong>. This is the library we use to handle the HTTP Request and Response. If you’ve ever created a GCP Cloud Function from Google’s
+				                                       tutorial on writing a
+				                                       Slack command with GCP Functions in JS, it is indeed the very same npm library wrapped in a thin shim of scala.
+				</li>
+				<li><strong>Note:</strong> At the time of writing, latest version of express is "io.scalajs.npm" %%% "express" % "0.5" though there appears to be an issue with the
+				                           dependency not resolving
+				                           - try the latest version out, and if you’re having issues, fall back to an earlier version.
+				</li>
+			</ul>
+
+			<h2>HelloWorldExample.scala</h2>
+			<p>Enough setup - now, let’s write the actual code that will respond with Hello World when receiving and http request. Create the scala source file,
+			   src/scala/codes/mostly/gcp/cloudfunctions/HelloWorldExample.scala, and populate it with some imports:
+			</p>
+
+			<details open>
+				<pre>import io.scalajs.npm.express.{Request, Response}
+import scala.scalajs.js.{Function2 => JSFunction2}
+import scala.scalajs.js.annotation.JSExportTopLevel
+</pre>
+			</details>
+
+			<p>We will use <strong>Response</strong> and <strong>Request</strong> from the express dependency mentioned earlier, and we’ll also import the scalajs Function2 as
+			   JSFunction2. You strictly speaking don’t have to do this renaming, but I like to make that distinction since the standard scala library already has a Function2, and it’s
+			   nice to keep the distinction between regular scala code and the explicitly JS-code. Lastly, we’ve got an import for the JSExportTopLevel annotation - we’ll come to that in
+			   a bit.</p>
+
+			<p>Now for the main logic. We need to provide a JSFunction2 that can be called by GCP:
+			</p>
+			<details open><pre>
+object HelloWorldExample {
+  val helloWorld: JSFunction2[Request, Response, Unit] = (req, res) ⇒ {
+    res.status(200).send("Hello World")
+  }
+}</pre>
+			</details>
+
+			<p>The function itself is trivial. It’s interesting to note the right-hand side of the = is just regular scala code. The code is automatically (well, implicitly) converted
+			   into a JSFunction2!
+			</p>
+			<p>Finally, we need to make use of the JSExportTopLevel annotation:</p>
+
+			<details open><pre>
+object HelloWorldExample {
+  @JSExportTopLevel("helloWorld")
+  val helloWorld: JSFunction2[Request, Response, Unit] = (req, res) ⇒ {
+    res.status(200).send("Hello World")
+  }
+}</pre>
+			</details>
+
+			<p>Adding the annotation specifies that the function should be exported to the top level of the module, and will thus be callable from GCP as “helloWorld” (or whatever you
+			   decided to put as the parameter). The string doesn’t strictly have to match the name of the val, but I see no reason not to have them be identical.
+			   Putting it all together, we end up with:
+			</p>
+
+			<details open><pre>
+package codes.mostly.gcp.cloudfunctions
+
+import io.scalajs.npm.express.{Request, Response}
+import scala.scalajs.js.annotation.JSExportTopLevel
+import scala.scalajs.js.{Function2 => JSFunction2}
+
+object HelloWorldExample {
+  @JSExportTopLevel("helloWorld")
+  val helloWorld: JSFunction2[Request, Response, Unit] = (req, res) ⇒ {
+    res.status(200).send("Hello World")
+  }
+}</pre>
+			</details>
+
+			<p>Exactly ten lines of scala if you ignore the whitespace.</p>
+
+			<h2>Build it</h2>
+			<p>Since we’re using the sbt scala.js plugin, we can now run a one-line command to build our JS file:</p>
+			<details open>
+				<pre>$ sbt fullOptJS</pre>
+			</details>
+			<p>This will generate our .js file in the target folder. If the name of the project is hello-world, the file will be named /target/scala-2.12/hello-world-opt.js. Because we
+			   used fullOptJS to fully optimize the JS, it should’ve been minimized into javascript gibberish:</p>
+
+			<details open><pre>
+'use strict';
+'use strict';var e=&quot;object&quot;===typeof __ScalaJSEnv&amp;&amp;__ScalaJSEnv?__ScalaJSEnv:{},k=&quot;object&quot;===typeof e.global&amp;&amp;e.global?e.global:&quot;object&quot;===typeof global&amp;&amp;global&amp;&amp;global.Object===Object?global:this;e.global=k;var m=exports;e.exportsNamespace=m;k.Object.freeze(e);var q={envInfo:e,semantics:{asInstanceOfs:2,arrayIndexOutOfBounds:2,moduleInit:2,strictFloats:!1,productionMode:!0},assumingES6:!1,linkerVersion:&quot;0.6.31&quot;,globalThis:this};k.Object.freeze(q);k.Object.freeze(q.semantics);
+var r=k.Math.imul||function(a,b){var c=a&amp;65535,d=b&amp;65535;return c*d+((a&gt;&gt;&gt;16&amp;65535)*d+c*(b&gt;&gt;&gt;16&amp;65535)&lt;&lt;16&gt;&gt;&gt;0)|0},t=k.Math.clz32||function(a){if(0===a)return 32;var b=1;0===(a&amp;4294901760)&amp;&amp;(a&lt;&lt;=16,b+=16);0===(a&amp;4278190080)&amp;&amp;(a&lt;&lt;=8,b+=8);0===(a&amp;4026531840)&amp;&amp;(a&lt;&lt;=4,b+=4);0===(a&amp;3221225472)&amp;&amp;(a&lt;&lt;=2,b+=2);return b+(a&gt;&gt;31)},u=0,v=k.WeakMap?new k.WeakMap:null;function w(a){return function(b,c){return!(!b||!b.$classData||b.$classData.k!==c||b.$classData.i!==a)}}function aa(a){for(var b in a)return b}
+function x(a,b,c){var d=new a.A(b[c]);if(c&lt;b.length-1){a=a.l;c+=1;for(var h=d.y,g=0;g&lt;h.length;g++)h[g]=x(a,b,c)}return d}function ba(a){switch(typeof a){case &quot;string&quot;:return y(z);case &quot;number&quot;:var b=a|0;return b===a?A(b)?y(B):C(b)?y(D):y(E):&quot;number&quot;===typeof a?y(F):y(G);case &quot;boolean&quot;:return y(I);case &quot;undefined&quot;:return y(ca);default:return null===a?a.T():a instanceof J?y(da):a&amp;&amp;a.$classData?y(a.$classData):null}}
+function ea(a){switch(typeof a){case &quot;string&quot;:fa||(fa=(new K).d());for(var b=0,c=1,d=-1+(a.length|0)|0;0&lt;=d;)b=b+r(65535&amp;(a.charCodeAt(d)|0),c)|0,c=r(31,c),d=-1+d|0;return b;case &quot;number&quot;:L||(L=(new M).d());b=L;c=a|0;if(c===a&amp;&amp;-Infinity!==1/a)b=c;else{if(b.f)b.B[0]=a,b=N(b.r[b.D]|0,b.r[b.C]|0);else{if(a!==a)b=!1,a=2047,c=+k.Math.pow(2,51);else if(Infinity===a||-Infinity===a)b=0&gt;a,a=2047,c=0;else if(0===a)b=-Infinity===1/a,c=a=0;else if(d=(b=0&gt;a)?-a:a,d&gt;=+k.Math.pow(2,-1022)){a=+k.Math.pow(2,52);c=
++k.Math.log(d)/.6931471805599453;c=+k.Math.floor(c)|0;c=1023&gt;c?c:1023;var h=+k.Math.pow(2,c);h&gt;d&amp;&amp;(c=-1+c|0,h/=2);h=d/h*a;d=+k.Math.floor(h);h-=d;d=.5&gt;h?d:.5&lt;h?1+d:0!==d%2?1+d:d;2&lt;=d/a&amp;&amp;(c=1+c|0,d=1);1023&lt;c?(c=2047,d=0):(c=1023+c|0,d-=a);a=c;c=d}else a=d/+k.Math.pow(2,-1074),c=+k.Math.floor(a),d=a-c,a=0,c=.5&gt;d?c:.5&lt;d?1+c:0!==c%2?1+c:c;c=+c;b=N(c|0,(b?-2147483648:0)|(a|0)&lt;&lt;20|c/4294967296|0)}b=b.s^b.q}return b;case &quot;boolean&quot;:return a?1231:1237;case &quot;undefined&quot;:return 0;default:return a&amp;&amp;a.$classData||
+null===a?a.w():null===v?42:ha(a)}}var ha=null!==v?function(a){switch(typeof a){case &quot;string&quot;:case &quot;number&quot;:case &quot;boolean&quot;:case &quot;undefined&quot;:return ea(a);default:if(null===a)return 0;var b=v.get(a);void 0===b&amp;&amp;(u=b=u+1|0,v.set(a,b));return b}}:function(a){if(a&amp;&amp;a.$classData){var b=a.$idHashCode$0;if(void 0!==b)return b;if(k.Object.isSealed(a))return 42;u=b=u+1|0;return a.$idHashCode$0=b}return null===a?0:ea(a)};function A(a){return&quot;number&quot;===typeof a&amp;&amp;a&lt;&lt;24&gt;&gt;24===a&amp;&amp;1/a!==1/-0}
+function C(a){return&quot;number&quot;===typeof a&amp;&amp;a&lt;&lt;16&gt;&gt;16===a&amp;&amp;1/a!==1/-0}function O(){this.t=this.A=void 0;this.i=this.l=this.h=null;this.k=0;this.z=null;this.p=&quot;&quot;;this.b=this.n=this.o=void 0;this.name=&quot;&quot;;this.isRawJSType=this.isArrayClass=this.isInterface=this.isPrimitive=!1;this.isInstance=void 0}function P(a,b,c){var d=new O;d.h={};d.l=null;d.z=a;d.p=b;d.b=function(){return!1};d.name=c;d.isPrimitive=!0;d.isInstance=function(){return!1};return d}
+function Q(a,b,c,d,h,g,l){var f=new O,n=aa(a);g=g||function(p){return!!(p&amp;&amp;p.$classData&amp;&amp;p.$classData.h[n])};l=l||function(p,H){return!!(p&amp;&amp;p.$classData&amp;&amp;p.$classData.k===H&amp;&amp;p.$classData.i.h[n])};f.t=h;f.h=c;f.p=&quot;L&quot;+b+&quot;;&quot;;f.b=l;f.name=b;f.isInterface=!1;f.isRawJSType=!!d;f.isInstance=g;return f}
+function ia(a){function b(f){if(&quot;number&quot;===typeof f){this.y=Array(f);for(var n=0;n&lt;f;n++)this.y[n]=h}else this.y=f}var c=new O,d=a.z,h=&quot;longZero&quot;==d?R().u:d;b.prototype=new S;b.prototype.constructor=b;b.prototype.$classData=c;d=&quot;[&quot;+a.p;var g=a.i||a,l=a.k+1;c.A=b;c.t=ja;c.h={a:1,V:1,c:1};c.l=a;c.i=g;c.k=l;c.z=null;c.p=d;c.o=void 0;c.n=void 0;c.b=void 0;c.name=d;c.isPrimitive=!1;c.isInterface=!1;c.isArrayClass=!0;c.isInstance=function(f){return g.b(f,l)};return c}
+function y(a){if(!a.o){var b=new T;b.m=a;a.o=b}return a.o}O.prototype.getFakeInstance=function(){if(this===z)return&quot;some string&quot;;if(this===I)return!1;if(this===B||this===D||this===E||this===F||this===G)return 0;if(this===da)return R().u;if(this!==ca)return{$classData:this}};O.prototype.getSuperclass=function(){return this.t?y(this.t):null};O.prototype.getComponentType=function(){return this.l?y(this.l):null};
+O.prototype.newArrayOfThisClass=function(a){for(var b=this,c=0;c&lt;a.length;c++)b.n||(b.n=ia(b)),b=b.n;return x(b,a,0)};var ka=P(!1,&quot;Z&quot;,&quot;boolean&quot;),la=P(0,&quot;C&quot;,&quot;char&quot;),ma=P(0,&quot;B&quot;,&quot;byte&quot;),na=P(0,&quot;S&quot;,&quot;short&quot;),oa=P(0,&quot;I&quot;,&quot;int&quot;),pa=P(&quot;longZero&quot;,&quot;J&quot;,&quot;long&quot;),qa=P(0,&quot;F&quot;,&quot;float&quot;),ra=P(0,&quot;D&quot;,&quot;double&quot;);ka.b=w(ka);la.b=w(la);ma.b=w(ma);na.b=w(na);oa.b=w(oa);pa.b=w(pa);qa.b=w(qa);ra.b=w(ra);function U(){}function S(){}S.prototype=U.prototype;U.prototype.d=function(){return this};U.prototype.x=function(){var a=ba(this).m.name,b=(+(this.w()&gt;&gt;&gt;0)).toString(16);return a+&quot;@&quot;+b};U.prototype.w=function(){return ha(this)};U.prototype.toString=function(){return this.x()};var ja=Q({a:0},&quot;java.lang.Object&quot;,{a:1},void 0,void 0,function(a){return null!==a},function(a,b){if(a=a&amp;&amp;a.$classData){var c=a.k||0;return!(c&lt;b)&amp;&amp;(c&gt;b||!a.i.isPrimitive)}return!1});U.prototype.$classData=ja;function V(){}
+V.prototype=new S;V.prototype.constructor=V;V.prototype.d=function(){W=this;sa=function(a,b){W||(W=(new V).d());b.status(200).send(&quot;Hello World&quot;)};return this};V.prototype.$classData=Q({E:0},&quot;codes.mostly.gcp.cloudfunctions.HelloWorldExample$&quot;,{E:1,a:1});var W=void 0;function T(){this.m=null}T.prototype=new S;T.prototype.constructor=T;T.prototype.x=function(){return(this.m.isInterface?&quot;interface &quot;:this.m.isPrimitive?&quot;&quot;:&quot;class &quot;)+this.m.name};T.prototype.$classData=Q({I:0},&quot;java.lang.Class&quot;,{I:1,a:1});
+function M(){this.f=!1;this.B=this.r=this.j=null;this.v=!1;this.D=this.C=0}M.prototype=new S;M.prototype.constructor=M;
+M.prototype.d=function(){L=this;this.j=(this.f=!!(k.ArrayBuffer&amp;&amp;k.Int32Array&amp;&amp;k.Float32Array&amp;&amp;k.Float64Array))?new k.ArrayBuffer(8):null;this.r=this.f?new k.Int32Array(this.j,0,2):null;this.f&amp;&amp;new k.Float32Array(this.j,0,2);this.B=this.f?new k.Float64Array(this.j,0,1):null;if(this.f)this.r[0]=16909060,a=1===((new k.Int8Array(this.j,0,8))[0]|0);else var a=!0;this.C=(this.v=a)?0:1;this.D=this.v?1:0;return this};M.prototype.$classData=Q({O:0},&quot;scala.scalajs.runtime.Bits$&quot;,{O:1,a:1});var L=void 0;
+function K(){}K.prototype=new S;K.prototype.constructor=K;K.prototype.d=function(){return this};K.prototype.$classData=Q({R:0},&quot;scala.scalajs.runtime.RuntimeString$&quot;,{R:1,a:1});var fa=void 0;function X(){}X.prototype=new S;X.prototype.constructor=X;function ta(){}ta.prototype=X.prototype;var ca=Q({S:0},&quot;scala.runtime.BoxedUnit&quot;,{S:1,a:1,c:1},void 0,void 0,function(a){return void 0===a}),I=Q({G:0},&quot;java.lang.Boolean&quot;,{G:1,a:1,c:1,e:1},void 0,void 0,function(a){return&quot;boolean&quot;===typeof a});
+function Y(){this.u=null}Y.prototype=new S;Y.prototype.constructor=Y;Y.prototype.d=function(){Z=this;this.u=N(0,0);return this};
+function ua(a,b){if(0===(-2097152&amp;b))b=&quot;&quot;+(4294967296*b+ +(a&gt;&gt;&gt;0));else{var c=(32+t(1E9)|0)-(0!==b?t(b):32+t(a)|0)|0,d=c,h=0===(32&amp;d)?1E9&lt;&lt;d:0;d=0===(32&amp;d)?5E8&gt;&gt;&gt;(31-d|0)|0|0&lt;&lt;d:1E9&lt;&lt;d;var g=a,l=b;for(a=b=0;0&lt;=c&amp;&amp;0!==(-2097152&amp;l);){var f=g,n=l,p=h,H=d;if(n===H?(-2147483648^f)&gt;=(-2147483648^p):(-2147483648^n)&gt;=(-2147483648^H))f=l,n=d,l=g-h|0,f=(-2147483648^l)&gt;(-2147483648^g)?-1+(f-n|0)|0:f-n|0,g=l,l=f,32&gt;c?b|=1&lt;&lt;c:a|=1&lt;&lt;c;c=-1+c|0;f=d&gt;&gt;&gt;1|0;h=h&gt;&gt;&gt;1|0|d&lt;&lt;31;d=f}c=l;if(0===c?-1147483648&lt;=(-2147483648^
+g):-2147483648&lt;=(-2147483648^c))c=4294967296*l+ +(g&gt;&gt;&gt;0),g=c/1E9,h=g/4294967296|0,d=b,b=g=d+(g|0)|0,a=(-2147483648^g)&lt;(-2147483648^d)?1+(a+h|0)|0:a+h|0,g=c%1E9|0;c=&quot;&quot;+g;b=&quot;&quot;+(4294967296*a+ +(b&gt;&gt;&gt;0))+&quot;000000000&quot;.substring(c.length|0)+c}return b}Y.prototype.$classData=Q({Q:0},&quot;scala.scalajs.runtime.RuntimeLong$&quot;,{Q:1,a:1,W:1,c:1});var Z=void 0;function R(){Z||(Z=(new Y).d());return Z}
+var z=Q({F:0},&quot;java.lang.String&quot;,{F:1,a:1,c:1,U:1,e:1},void 0,void 0,function(a){return&quot;string&quot;===typeof a}),B=Q({H:0},&quot;java.lang.Byte&quot;,{H:1,g:1,a:1,c:1,e:1},void 0,void 0,function(a){return A(a)}),G=Q({J:0},&quot;java.lang.Double&quot;,{J:1,g:1,a:1,c:1,e:1},void 0,void 0,function(a){return&quot;number&quot;===typeof a}),F=Q({K:0},&quot;java.lang.Float&quot;,{K:1,g:1,a:1,c:1,e:1},void 0,void 0,function(a){return&quot;number&quot;===typeof a}),E=Q({L:0},&quot;java.lang.Integer&quot;,{L:1,g:1,a:1,c:1,e:1},void 0,void 0,function(a){return&quot;number&quot;===
+typeof a&amp;&amp;(a|0)===a&amp;&amp;1/a!==1/-0}),da=Q({M:0},&quot;java.lang.Long&quot;,{M:1,g:1,a:1,c:1,e:1},void 0,void 0,function(a){return a instanceof J}),D=Q({N:0},&quot;java.lang.Short&quot;,{N:1,g:1,a:1,c:1,e:1},void 0,void 0,function(a){return C(a)});function J(){this.q=this.s=0}J.prototype=new ta;J.prototype.constructor=J;J.prototype.x=function(){R();var a=this.s,b=this.q;return b===a&gt;&gt;31?&quot;&quot;+a:0&gt;b?&quot;-&quot;+ua(-a|0,0!==a?~b:-b|0):ua(a,b)};function N(a,b){var c=new J;c.s=a;c.q=b;return c}J.prototype.w=function(){return this.s^this.q};
+J.prototype.$classData=Q({P:0},&quot;scala.scalajs.runtime.RuntimeLong&quot;,{P:1,g:1,a:1,c:1,e:1});var sa=null;W||(W=(new V).d());Object.defineProperty(m,&quot;helloWorld&quot;,{get:function(){return sa},configurable:!0});
+//# sourceMappingURL=hello-world-opt.js.map
+			</pre>
+			</details>
+
+			<p>An aesthetic nightmare, but a clever piece of optimization! You will note that despite us transpiling scala into JS, the end result is surprisingly a small amount of
+			   Javascript. This is thanks to the optimizer dutifully identifying the classes and methods reachable from our entry point and removing everything else. Theoretically, using
+			   fullOptJS instead of fastOptJS should also result in a more “thorough” optimization resulting in faster code. The actual performance improvement is in all likelihood
+			   negligible, but since we’re treating javascript as a transpilation target, readability doesn’t matter to us.
+			</p>
+
+			<h2>Wrapping up and next steps</h2>
+
+			<p>… And that’s it! All you’ve got left is deploying the scala.js output javascript as a Cloud Function. For that, I refer you to the excellent GCP Cloud Functions
+			   documentation.</p>
+
+			<p>Obviously, the Hello World example is too simple to justify a transpiled scala.js project, but for projects where you want type safety and the scala eco system present, I
+			   think tiny amount of boilerplate and dependencies required to get up and running makes it worthwhile.</p>
+
+			<p>Word of warning; as you add more dependencies and lines of code to your project, the JS payload size will start to shoot up rather quickly, and (depending on complexity of
+			   your code) so will the execution time. If your function ends up taking a significant amount of time to execute in GCP, you will probably want to consider other solutions
+			   than serverless functions as your costs are directly tied to the execution time of the function.
+			</p>
+
+			<hr>
+
+			<p>If you found this useful, have a look at the <a href="https://github.com/TobiasRoland/scalajs-gcp-cloud-function">code on github</a> and hey, while you’re there, maybe add a ⭐ to give me that dopamine hit of validation!</p>
+
+			<p><strong>Update:</strong> A giter8 template is now available: <a href="https://github.com/TobiasRoland/scalajs-gcp-cloud-functions.g8">TobiasRoland/scalajs-gcp-cloud-functions.g8</a></p>
+
+
+
+			<section class="field-row" style="justify-content: center">
+				<button onclick="window.location.href='../'"><< Back</button>
+			</section>
+		</div>
+
+		<div class="status-bar">
+			<p class="status-bar-field"><a href="https://github.com/TobiasRoland">gh</a></p>
+			<p class="status-bar-field"><a href="https://www.linkedin.com/in/tobiasroland/">linkedin</a></p>
+		</div>
+	</div>
+</main>
+</body>
+</html>
