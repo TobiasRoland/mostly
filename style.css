@@ -138,11 +138,11 @@ li[role="tab"] {
 }
 
 h1, h2, h3, h4 {
-    color: darkblue;
+    color: black;
 }
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
+h1 { font-size: 1.2rem; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1.2rem; }
 h4 { font-size: 1.2rem; }
 
 u {
@@ -268,7 +268,7 @@ input[type="reset"]:disabled,
 .title-bar-controls button[aria-label="Close"] {
     margin-left: 2px;
     background-image: var(--icon-close);
-    background-position: top 2px left 3px;
+    background-position: center;
 }
 
 .status-bar {
@@ -574,6 +574,51 @@ ul.tree-view a:focus { background-color: var(--dialog-blue); color: var(--button
     width: 1rem;
     background-image: var(--icon-scrollbar-right);
     background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Anchor tags styled as Win98 buttons */
+a.btn {
+    display: inline-block;
+    box-sizing: border-box;
+    border: none;
+    text-decoration: none;
+    color: var(--text-color);
+    background: var(--surface);
+    box-shadow: var(--border-raised-outer), var(--border-raised-inner);
+    border-radius: 0;
+    min-width: 4.6875rem;
+    min-height: 1.4375rem;
+    padding: 0.2rem 0.75rem;
+    text-align: center;
+    line-height: 1.4375rem;
+    cursor: default;
+}
+
+a.btn:active {
+    box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+    padding: 0.2rem calc(0.75rem - 1px) 0.2rem calc(0.75rem + 1px);
+}
+
+/* Anchor tags in title-bar-controls (for no-JS close buttons) */
+.title-bar-controls a {
+    padding: 0;
+    display: block;
+    min-width: 1rem;
+    min-height: 0.875rem;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    background-color: var(--surface);
+    box-shadow: var(--border-raised-outer), var(--border-raised-inner);
+}
+
+.title-bar-controls a:active {
+    box-shadow: var(--border-sunken-outer), var(--border-sunken-inner);
+}
+
+.title-bar-controls a[aria-label="Close"] {
+    margin-left: 2px;
+    background-image: var(--icon-close);
     background-position: center;
 }
 

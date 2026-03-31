@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +10,13 @@
 <body>
 <main>
 	<div class="window">
+		<div class="title-bar">
+			<div class="title-bar-text">mostly.codes - GCP Cloud Functions with Scala.js in 10 lines(ish)</div>
+			<div class="title-bar-controls">
+				<a href="../" aria-label="Close"></a>
+			</div>
+		</div>
 		<div class="window-body">
-			<h1>GCP Cloud Functions with Scala.js in 10 lines(ish)</h1>
-			<div>20 January 2020</div>
 
 			<blockquote>
 				<p>
@@ -21,22 +25,18 @@
 				</p>
 				<p>
 					<strong>First update:</strong> I’ve since this blog post created a giter8 template, so if you just want to get up and running, execute:
-				<div open>
-					<pre>sbt new TobiasRoland/scalajs-gcp-cloud-functions.g8</pre>
-				</div>
-				<p>
 				</p>
+				<details open>
+					<pre>sbt new TobiasRoland/scalajs-gcp-cloud-functions.g8</pre>
+				</details>
 			</blockquote>
-
-
 			<p>It’s easy to spin up a node.js runtime on Google Cloud Platform’s Cloud Functions, but say you want to write in Scala instead of JavaScript… well, that’s thankfully easy
 			   too! Though requires a few extra steps.</p>
 
 			<p>Since couldn’t find a good tutorial on how to get Scala.js working in a Google Cloud Function, I decided to write one.</p>
 
 			<h2>What we’ll build</h2>
-			<p>An earth-shatteringly simple cloud function in Scala(.js) that will respond to any HTTP request with a 200 OK and a plaintext body of Hello World.
-			<p>
+			<p>An earth-shatteringly simple cloud function in Scala(.js) that will respond to any HTTP request with a 200 OK and a plaintext body of Hello World.</p>
 
 			<p>This tutorial is written to be accessible to beginners, and so you shouldn’t need any deep familiarity with scala.js, sbt, GCP, cloud functions nor node.js to follow this
 			   example.</p>
@@ -59,8 +59,7 @@
 			   javascript would result in a huge slow artifact, the optimization step makes sure to only transpile the bare minimum amount of code required to execute the function.</p>
 
 			<h2>Preconditions</h2>
-			<p>I assume the following have been installed already:
-			<p>
+			<p>I assume the following have been installed already:</p>
 			<ul>
 				<li>sbt</li>
 				<li>nodeJS</li>
@@ -97,9 +96,7 @@ scalaJSModuleKind := org.scalajs.core.tools.linker.backend.ModuleKind.CommonJSMo
 scalaJSUseMainModuleInitializer := false
 libraryDependencies += "io.scalajs.npm" %%% "express" % "0.4.2" // NOTE! To use dependencies with scala.js, dependencies are declared with triple percentage instead of double</pre>
 			</details>
-
-			<p>
-			<p>What we’ve accomplished here:</p
+			<p>What we’ve accomplished here:</p>
 
 			<ul>
 				<li><strong>enablePlugins(ScalaJSPlugin)</strong> does what it says on the tin</li>
@@ -244,16 +241,15 @@ J.prototype.$classData=Q({P:0},&quot;scala.scalajs.runtime.RuntimeLong&quot;,{P:
 
 			<p><strong>Update:</strong> A giter8 template is now available: <a href="https://github.com/TobiasRoland/scalajs-gcp-cloud-functions.g8">TobiasRoland/scalajs-gcp-cloud-functions.g8</a></p>
 
-
-
 			<section class="field-row" style="justify-content: center">
-				<button onclick="window.location.href='../'"><< Back</button>
+				<a href="../" class="btn">&lt;&lt; Back</a>
 			</section>
 		</div>
 
 		<div class="status-bar">
 			<p class="status-bar-field"><a href="https://github.com/TobiasRoland">gh</a></p>
 			<p class="status-bar-field"><a href="https://www.linkedin.com/in/tobiasroland/">linkedin</a></p>
+			<p class="status-bar-field">20 January 2020</p>
 		</div>
 	</div>
 </main>
