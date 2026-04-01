@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>mostly.codes</title>
+		<link>https://mostly.codes/</link>
+		<description>Personal blog of Tobias Roland. Writing about people, processes, and technology.</description>
+		<language>en-gb</language>
+		<atom:link href="https://mostly.codes/feed.xml" rel="self" type="application/rss+xml"/>
+		<lastBuildDate>Tue, 31 Mar 2026 00:00:00 +0000</lastBuildDate>
+		<item>
+			<title>Modern communication is an inverse zipfile (LLM culture)</title>
+			<link>https://mostly.codes/blog/modern-communication-is-an-inverse-zipfile-llm-culture.html</link>
+			<guid>https://mostly.codes/blog/modern-communication-is-an-inverse-zipfile-llm-culture.html</guid>
+			<pubDate>Tue, 31 Mar 2026 00:00:00 +0000</pubDate>
+			<description>How LLM-mediated communication creates a lossy inverse zipfile effect, eroding trust and signal quality in how we talk to each other.</description>
+		</item>
+		<item>
+			<title>Rethinking how I blog (Technically)</title>
+			<link>https://mostly.codes/blog/rethinking-how-i-blog-technically.html</link>
+			<guid>https://mostly.codes/blog/rethinking-how-i-blog-technically.html</guid>
+			<pubDate>Sun, 27 Jul 2025 00:00:00 +0000</pubDate>
+			<description>Moving from Jekyll to hand-rolled HTML and CSS — finding joy in reducing cognitive overhead and embracing brutalist web design.</description>
+		</item>
+		<item>
+			<title>GCP Cloud Functions with Scala.js in 10 lines(ish)</title>
+			<link>https://mostly.codes/blog/creating-scalajs-gcp-cloud-functions.html</link>
+			<guid>https://mostly.codes/blog/creating-scalajs-gcp-cloud-functions.html</guid>
+			<pubDate>Fri, 17 Jan 2020 00:00:00 +0000</pubDate>
+			<description>A guide to creating GCP Cloud Functions with Scala.js in approximately 10 lines of code.</description>
+		</item>
+		<item>
+			<title>Scale by the Bay 2019</title>
+			<link>https://mostly.codes/blog/scale-by-the-bay-2019.html</link>
+			<guid>https://mostly.codes/blog/scale-by-the-bay-2019.html</guid>
+			<pubDate>Sun, 17 Nov 2019 00:00:00 +0000</pubDate>
+			<description>A recap of attending the Scale by the Bay 2019 conference in San Francisco — talks on Scala, functional programming, ZIO, and Unison.</description>
+		</item>
+		<item>
+			<title>I quit my job to study what I'm passionate about</title>
+			<link>https://mostly.codes/blog/career-break.html</link>
+			<guid>https://mostly.codes/blog/career-break.html</guid>
+			<pubDate>Sat, 09 Nov 2019 00:00:00 +0000</pubDate>
+			<description>Taking time off to study functional programming, Scala, and category theory — quitting a stable job to focus on what I care about.</description>
+		</item>
+	</channel>
+</rss>

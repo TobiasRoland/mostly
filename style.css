@@ -109,7 +109,7 @@ blockquote {
 }
 
 footer {
-    margin: 1rem;
+    margin: 0;
 }
 
 body {
@@ -249,6 +249,9 @@ input[type="reset"]:disabled,
     color: white;
     letter-spacing: 0;
     margin-right: 1.5rem;
+    font-size: inherit;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .title-bar-controls {

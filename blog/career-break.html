@@ -22,6 +22,7 @@
     <meta name="author" content="Tobias Roland">
     <meta property="og:locale" content="en_GB">
     <meta name="theme-color" content="#008080">
+    <link rel="alternate" type="application/rss+xml" title="mostly.codes RSS" href="../feed.xml">
     <link href="../style.css" rel="stylesheet">
     <script type="application/ld+json">
         {
@@ -50,12 +51,12 @@
 <body>
 <main>
     <div class="window">
-        <div class="title-bar">
-            <div class="title-bar-text">mostly.codes - I quit my job to study what I'm passionate about</div>
+        <header class="title-bar">
+            <h1 class="title-bar-text">mostly.codes - I quit my job to study what I'm passionate about</h1>
             <div class="title-bar-controls">
                 <a aria-label="Close" href="../"></a>
             </div>
-        </div>
+        </header>
         <div class="window-body">
             <article>
                 <p>I’m taking the last months of 2019 off to study functional programming, scala and category theory. I
@@ -89,17 +90,18 @@
 
             </article>
             <nav class="field-row field-row-centered">
-                <a class="btn" href="../">&lt;&lt; Back</a>
+                <a class="btn" href="../" aria-label="Back to homepage">&lt;&lt; Back</a>
             </nav>
         </div>
 
-        <div class="status-bar">
-            <p class="status-bar-field"><a href="https://github.com/TobiasRoland">gh</a></p>
-            <p class="status-bar-field"><a href="https://www.linkedin.com/in/tobiasroland/">linkedin</a></p>
+        <footer class="status-bar">
+            <p class="status-bar-field"><a href="https://github.com/TobiasRoland" aria-label="GitHub">gh</a></p>
+            <p class="status-bar-field"><a href="https://www.linkedin.com/in/tobiasroland/" aria-label="LinkedIn">linkedin</a></p>
+            <p class="status-bar-field"><a href="../feed.xml" aria-label="RSS Feed">rss</a></p>
             <p class="status-bar-field">
                 <time datetime="2019-11-09">09 November 2019</time>
             </p>
-        </div>
+        </footer>
     </div>
 </main>
 </body>

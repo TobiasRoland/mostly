@@ -18,6 +18,7 @@
 	<meta name="author" content="Tobias Roland">
 	<meta property="og:locale" content="en_GB">
 	<meta name="theme-color" content="#008080">
+	<link rel="alternate" type="application/rss+xml" title="mostly.codes RSS" href="feed.xml">
 	<link rel="stylesheet" href="style.css">
 	<script type="application/ld+json">
 	{
@@ -40,9 +41,9 @@
 <body>
 <main>
 	<div class="window">
-		<div class="title-bar">
-			<div class="title-bar-text">mostly.codes</div>
-		</div>
+		<header class="title-bar">
+			<h1 class="title-bar-text">mostly.codes</h1>
+		</header>
 		<div class="window-body">
 			<fieldset>
 				<legend>Blog Posts (ISO8601: Title)</legend>
@@ -61,10 +62,11 @@
 			</p>
 		</div>
 
-		<div class="status-bar">
-			<p class="status-bar-field"><a href="https://github.com/TobiasRoland">gh</a></p>
-			<p class="status-bar-field"><a href="https://www.linkedin.com/in/tobiasroland/">linkedin</a></p>
-		</div>
+		<footer class="status-bar">
+			<p class="status-bar-field"><a href="https://github.com/TobiasRoland" aria-label="GitHub">gh</a></p>
+			<p class="status-bar-field"><a href="https://www.linkedin.com/in/tobiasroland/" aria-label="LinkedIn">linkedin</a></p>
+			<p class="status-bar-field"><a href="feed.xml" aria-label="RSS Feed">rss</a></p>
+		</footer>
 	</div>
 </main>
 </body>
