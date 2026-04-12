@@ -541,6 +541,12 @@ ul.tree-view {
 
 ul.tree-view li {
     list-style-type: none;
+    padding-bottom: 0.5em;
+}
+
+/* Prevents awkward extra empty space at the bottom of the window */
+ul.tree-view li:last-child {
+    padding-bottom: 0;
 }
 
 ul.tree-view ul {
