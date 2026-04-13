@@ -21,9 +21,9 @@ find "$PROJECT_DIR" -maxdepth 2 -name "*.html" | while read -r html_file; do
   fi
   # Define the output PNG filename by stripping '.html' and adding '.png'.
   og_image="${html_file%.html}.png"
-  echo "\t Screenshotting $html_file..."
+  echo "Screenshotting $html_file..."
   firefox --headless --screenshot "$og_image" --window-size=1200,630 "file://$html_file" 2>/dev/null
-  echo "Saved $og_image"
+  echo "\tSaved $og_image"
 done
 
 echo "Done."
